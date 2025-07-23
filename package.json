@@ -1,6 +1,14 @@
 {
+  "name": "freshydefcon",
+  "version": "1.0.0",
+  "description": "Defcon bot for Freshy",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "discord.js": "^14.21.0",
-    "dotenv": "^17.2.0"
+    "dotenv": "^17.2.0",
+    "express": "^4.19.2"
   }
 }
