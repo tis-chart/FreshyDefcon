@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, Collection, Events } = require('discord.js');
 const fs = require('fs');
+const express = require('express');
 require('dotenv').config(); // Load .env
 
 const client = new Client({
@@ -50,3 +51,16 @@ client.on('guildDelete', (guild) => {
 
 // === Login ===
 client.login(process.env.DISCORD_TOKEN);
+
+// === Express Server to Keep Render Happy ===
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('🛰️ FreshyDefcon is alive.');
+});
+
+app.listen(PORT, () => {
+  console.log(`🌐 Web service running on port ${PORT}`);
+});
+
