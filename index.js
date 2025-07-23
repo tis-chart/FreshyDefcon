@@ -1,8 +1,11 @@
+// === Discord + Express Bot Starter ===
+
 const { Client, GatewayIntentBits, Collection, Events } = require('discord.js');
 const fs = require('fs');
 const express = require('express');
-require('dotenv').config(); // Load .env
+require('dotenv').config();
 
+// === Create Discord Client ===
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
@@ -16,12 +19,12 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-// === On Ready ===
+// === On Bot Ready ===
 client.once(Events.ClientReady, () => {
   console.log(`🟢 Logged in as ${client.user.tag}`);
 });
 
-// === Interaction Handler ===
+// === Slash Command Handler ===
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -36,23 +39,27 @@ client.on(Events.InteractionCreate, async interaction => {
     });
   } catch (error) {
     console.error(`❌ Error executing ${interaction.commandName}:`, error);
-    await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: '⚠️ Something went wrong.', ephemeral: true });
+    } else {
+      await interaction.reply({ content: '⚠️ There was an error executing this command.', ephemeral: true });
+    }
   }
 });
 
-// === Guild Events ===
-client.on('guildCreate', (guild) => {
+// === Optional Logging When Joining/Leaving Servers ===
+client.on('guildCreate', guild => {
   console.log(`✅ Joined guild: ${guild.name} (${guild.id})`);
 });
 
-client.on('guildDelete', (guild) => {
+client.on('guildDelete', guild => {
   console.log(`❌ Removed from guild: ${guild.name} (${guild.id})`);
 });
 
-// === Login ===
+// === Log in to Discord ===
 client.login(process.env.DISCORD_TOKEN);
 
-// === Express Server to Keep Render Happy ===
+// === Keep-Alive Web Server for Render + UptimeRobot ===
 const app = express();
 const PORT = process.env.PORT || 3000;
 
